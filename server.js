@@ -55,6 +55,24 @@ app.get('/api/datos', async (req, res) => {
   }
 });
 
+// Ruta para obtener una cantidad específica de datos almacenados
+app.get('/api/datos/:cantidad', async (req, res) => {
+    const cantidad = parseInt(req.params.cantidad); // Obtener el número desde la URL
+    
+    if (isNaN(cantidad) || cantidad <= 0) {
+      return res.status(400).json({ message: 'La cantidad debe ser un número positivo' });
+    }
+    
+    try {
+      const datos = await SensorData.find().sort({ timestamp: -1 }).limit(cantidad);
+      res.status(200).json(datos);
+    } catch (err) {
+      res.status(500).json({ message: 'Error al obtener los datos', error: err });
+    }
+  });
+  
+
+
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
 });
